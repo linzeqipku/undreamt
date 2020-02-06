@@ -35,7 +35,7 @@ class Translator:
         self.device = device
         weight = device(torch.ones(generator.output_classes()))
         weight[data.PAD] = 0
-        self.criterion = nn.NLLLoss(weight, size_average=False)
+        self.criterion = nn.NLLLoss(weight, reduction='sum')
 
     def _train(self, mode):
         self.encoder_embeddings.train(mode)
@@ -56,7 +56,11 @@ class Translator:
                         j = random.randint(0, length-2)
                         ids[j][i], ids[j+1][i] = ids[j+1][i], ids[j][i]
 
-        varids = self.device(Variable(torch.LongTensor(ids), requires_grad=False, volatile=not train))
+        if train:
+            varids = self.device(Variable(torch.LongTensor(ids), requires_grad=False))
+        else:
+            with torch.no_grad():
+                varids = self.device(Variable(torch.LongTensor(ids), requires_grad=False))
         hidden = self.device(self.encoder.initial_hidden(len(sentences)))
         hidden, context = self.encoder(ids=varids, lengths=lengths, word_embeddings=self.encoder_embeddings, hidden=hidden)
         return hidden, context, lengths

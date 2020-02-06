@@ -1,0 +1,10 @@
+=============================================================================
+HelloWorld:
+=============================================================================
+Train:
+python3 train.py
+--trg data/mock/TRG.MONO.TXT --src2trg data/mock/SRC.PARALLEL.TXT data/mock/TRG.PARALLEL.TXT --trg2src data/mock/TRG.PARALLEL.TXT data/mock/SRC.PARALLEL.TXT --src_vocabulary data/mock/SRC.VOCAB.TXT --trg_vocabulary data/mock/TRG.VOCAB.TXT --embedding_size 300 --learn_encoder_embeddings --disable_denoising --save data/mock/models/model --save_interval 100 --log_interval 100 --iterations 1000 --cuda
+-----------------------------------------------------------------------------
+Print TRG to SRC result:
+python3 translate.py
+data/mock/models/model.final.trg2src.pth -i data/mock/TRG.MONO.TXT -o data/mock/outputs/SRC.MONO.OUTPUT.TXT --beam_size 2
